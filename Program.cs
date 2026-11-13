@@ -1,29 +1,27 @@
 ﻿using System;
+using System.IO;
 
 class Program
 {
-    static string ReverseString(string s)
-    {
-        string result = "";
-
-        // Идём с конца к началу и собираем строку
-        for (int i = s.Length - 1; i >= 0; i--)
-        {
-            result += s[i];
-        }
-
-        return result;
-    }
-
     static void Main()
     {
-        Console.WriteLine(ReverseString("hello"));       // olleh
-        Console.WriteLine(ReverseString("Привет, мир")); // рим ,тевирП
-        Console.WriteLine(ReverseString("a"));           // a
-        Console.WriteLine(ReverseString(""));            // (пусто)
+        Console.Write("Введи имя файла: ");
+        string fileName = Console.ReadLine();
 
-        Console.Write("Введи свою строку: ");
-        string text = Console.ReadLine();
-        Console.WriteLine("Наоборот: " + ReverseString(text));
+        // Файла нет — сообщаем и выходим
+        if (!File.Exists(fileName))
+        {
+            Console.WriteLine("Такого файла не существует");
+            return;
+        }
+
+        string text = File.ReadAllText(fileName);
+
+        // ToUpper() возвращает новую строку, исходная не меняется
+        string upperText = text.ToUpper();
+
+        File.WriteAllText("output.txt", upperText);
+
+        Console.WriteLine("Готово! Результат в файле output.txt");
     }
 }
