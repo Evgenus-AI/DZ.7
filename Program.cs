@@ -1,28 +1,42 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 class Program
 {
-    // is: просто true/false
-    static bool CheckWithIs(object obj)
+    // ref: метод меняет саму переменную снаружи.
+    // Приходит вся строка, уходит только e-mail
+    static void SearchMail(ref string s)
     {
-        return obj is IFormattable;
-    }
-
-    // as: пробует привести тип, не вышло — null
-    static bool CheckWithAs(object obj)
-    {
-        IFormattable f = obj as IFormattable;
-        return f != null;
+        // Делим по # : [0] — ФИО, [1] — почта
+        string[] parts = s.Split('#');
+        s = parts[1].Trim();
     }
 
     static void Main()
     {
-        // 42 и 3.14 упаковываются в object (boxing)
-        object[] items = { 42, 3.14, "строка", DateTime.Now, new object() };
-
-        foreach (object item in items)
+        if (!File.Exists("input.txt"))
         {
-            Console.WriteLine($"{item}: is -> {CheckWithIs(item)}, as -> {CheckWithAs(item)}");
+            Console.WriteLine("Файл input.txt не найден");
+            return;
         }
+
+        string[] lines = File.ReadAllLines("input.txt");
+        List<string> emails = new List<string>();
+
+        foreach (string line in lines)
+        {
+            // Пустые строки и строки без # пропускаем
+            if (!line.Contains("#"))
+                continue;
+
+            string s = line;
+            SearchMail(ref s);
+            emails.Add(s);
+        }
+
+        File.WriteAllLines("emails.txt", emails);
+
+        Console.WriteLine($"Записано адресов: {emails.Count}. Файл emails.txt");
     }
 }
