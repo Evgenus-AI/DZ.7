@@ -1,27 +1,28 @@
 ﻿using System;
-using System.IO;
 
 class Program
 {
+    // is: просто true/false
+    static bool CheckWithIs(object obj)
+    {
+        return obj is IFormattable;
+    }
+
+    // as: пробует привести тип, не вышло — null
+    static bool CheckWithAs(object obj)
+    {
+        IFormattable f = obj as IFormattable;
+        return f != null;
+    }
+
     static void Main()
     {
-        Console.Write("Введи имя файла: ");
-        string fileName = Console.ReadLine();
+        // 42 и 3.14 упаковываются в object (boxing)
+        object[] items = { 42, 3.14, "строка", DateTime.Now, new object() };
 
-        // Файла нет — сообщаем и выходим
-        if (!File.Exists(fileName))
+        foreach (object item in items)
         {
-            Console.WriteLine("Такого файла не существует");
-            return;
+            Console.WriteLine($"{item}: is -> {CheckWithIs(item)}, as -> {CheckWithAs(item)}");
         }
-
-        string text = File.ReadAllText(fileName);
-
-        // ToUpper() возвращает новую строку, исходная не меняется
-        string upperText = text.ToUpper();
-
-        File.WriteAllText("output.txt", upperText);
-
-        Console.WriteLine("Готово! Результат в файле output.txt");
     }
 }
